@@ -1,3 +1,5 @@
+package java2.lesson1;
+
 public interface Being {
     void jump();
     void run();

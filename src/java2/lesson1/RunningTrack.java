@@ -1,3 +1,5 @@
+package java2.lesson1;
+
 public class RunningTrack implements Obstacle{
     private int size;
     private String name="Беговая дорожка";

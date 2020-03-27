@@ -1,17 +1,18 @@
-public class Human implements Being{
+package java2.lesson1;
 
+public class Cat implements Being{
     private int maxDistance;
     private int maxJump;
     private String name;
 
-    public Human(String name, int maxDistance, int maxJump) {
+    public Cat(String name, int maxDistance, int maxJump) {
         this.name=name;
         this.maxDistance = maxDistance;
         this.maxJump = maxJump;
     }
 
-    public Human(String name) {
-        this(name, 300, 50);
+    public Cat(String name) {
+        this(name, 500, 200);
     }
 
     @Override
@@ -31,11 +32,11 @@ public class Human implements Being{
 
     @Override
     public void jump() {
-        System.out.printf("Человек по имени %s прыгнул на %d сантиметров%n", name, maxJump);
+        System.out.printf("Кот по кличке %s прыгнул на %d сантиметров%n", name, maxJump);
     }
 
     @Override
     public void run() {
-        System.out.printf("Человек по имени %s пробежал на %d метров%n", name, maxDistance);
+        System.out.printf("Кот по кличке %s пробежал на %d метров%n", name, maxDistance);
     }
 }
