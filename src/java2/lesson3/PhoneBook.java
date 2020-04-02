@@ -26,18 +26,14 @@ public class PhoneBook {
         Iterator<String> iter;
 
         phoneOwner = "Горбачев";
-        iter=get(phoneOwner);
-        System.out.println("Все телефоны абонента " + phoneOwner);
-        while (iter.hasNext()){
-            System.out.println(iter.next()+ " ");
-        }
+        printPhoneOwnerData(phoneOwner);
 
         phoneOwner = "Путин";
-        iter=get(phoneOwner);
-        System.out.println("Все телефоны абонента " + phoneOwner);
-        while (iter.hasNext()){
-            System.out.println(iter.next()+ " ");
-        }
+        printPhoneOwnerData(phoneOwner);
+
+        phoneOwner = "Иванов";
+        printPhoneOwnerData(phoneOwner);
+
     }
 
     private static void add(String name, String phoneNumber){
@@ -50,7 +46,18 @@ public class PhoneBook {
     }
 
     private static Iterator<String> get(String name){
-        return phoneBook.get(name).iterator();
+        return phoneBook.get(name)!=null?phoneBook.get(name).iterator():null;
     }
 
+    private static void printPhoneOwnerData (String phoneOwner){
+        Iterator <String> iter=get(phoneOwner);
+        if (iter==null) {
+            System.out.println("Абонент " + phoneOwner + " не найден");
+            return;
+        }
+        System.out.println("Все телефоны абонента " + phoneOwner);
+        while (iter.hasNext()){
+            System.out.println(iter.next()+ " ");
+        }
+    }
 }
