@@ -45,12 +45,12 @@ public class Threads {
         splitTimer =System.currentTimeMillis() - splitTimer;
         System.out.printf("Время разбивки массива на две половины: %s мсек\n", splitTimer);
 
-        MathMachine mathMachine1 = new MathMachine(startArr);
+        MathMachine mathMachine1 = new MathMachine(startArr, 0);
         Thread thread1 = new Thread(mathMachine1);
         thread1.start();
         startArr = mathMachine1.getArr();
 
-        MathMachine mathMachine2 = new MathMachine(endArr);
+        MathMachine mathMachine2 = new MathMachine(endArr, HALF_SIZE);
         Thread thread2 = new Thread(mathMachine2);
         thread2.start();
         endArr = mathMachine2.getArr();
@@ -74,15 +74,18 @@ public class Threads {
     static class MathMachine implements Runnable {
         private float[] arr;
         private long timer;
+        int startPosition;
 
-        public MathMachine (float[] arr){
+        public MathMachine (float[] arr, int startPosition){
             this.arr=arr;
+            this.startPosition=startPosition;
         }
         @Override
         public void run() {
             timer = System.currentTimeMillis();
+
             for (int i = 0; i < arr.length; i++) {
-                arr[i] = (float)(arr[i] * Math.sin(0.2f + i / 5) * Math.cos(0.2f + i / 5) * Math.cos(0.4f + i / 2));
+                arr[i] = (float)(arr[i] * Math.sin(0.2f + (i+startPosition) / 5) * Math.cos(0.2f + (i+startPosition) / 5) * Math.cos(0.4f + (i+startPosition) / 2));
             }
             timer = System.currentTimeMillis() - timer;
         }
