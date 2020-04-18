@@ -1,4 +1,4 @@
-package java2.GBChat;
+package java2.GBChat.client;
 
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
@@ -14,6 +14,7 @@ public class GBChat extends Application {
         primaryStage.setTitle("GBChat");
         primaryStage.setScene(new Scene(root, 800, 600));
         primaryStage.show();
+
     }
 
 
