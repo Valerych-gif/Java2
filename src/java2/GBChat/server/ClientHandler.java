@@ -10,6 +10,7 @@ public class ClientHandler {
     private Socket socket;
     private DataInputStream in;
     private DataOutputStream out;
+    private static final int AUTH_TIMER = 20_000;
 
     private String name;
 
@@ -23,7 +24,19 @@ public class ClientHandler {
             this.socket = socket;
             this.in = new DataInputStream(socket.getInputStream());
             this.out = new DataOutputStream(socket.getOutputStream());
-            this.name = "";
+            this.name = null;
+            new Thread(()->{
+                try {
+                    Thread.sleep(AUTH_TIMER);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                if (name==null){
+                    sendMsg("/end");
+                    System.out.println("Клиент отключен от соединения по тайм-ауту");
+                    closeConnection();
+                }
+            }).start();
             new Thread(() -> {
                 try {
                     authentication();
