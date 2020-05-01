@@ -1,4 +1,4 @@
-package java2.GBChat.server;
+package server;
 
 import java.util.ArrayList;
 import java.util.List;

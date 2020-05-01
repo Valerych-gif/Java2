@@ -1,4 +1,4 @@
-package java2.GBChat.server;
+package server;
 
 public interface AuthService {
     void start();

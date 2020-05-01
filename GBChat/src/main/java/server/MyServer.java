@@ -1,30 +1,37 @@
-package java2.GBChat.server;
+package server;
 
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class MyServer {
     private final int PORT = 8189;
 
-    private List<ClientHandler> clients;
+    private Map<String, ClientHandler> clients;
     private AuthService authService;
+
+    private DBController dbController;
 
     public AuthService getAuthService() {
         return authService;
     }
 
-    public List<ClientHandler> getClients() {
-        return clients;
+    public DBController getDbController() {
+        return dbController;
     }
 
     public MyServer() {
         try (ServerSocket server = new ServerSocket(PORT)) {
-            authService = new BaseAuthService();
+            dbController = new DBController();
+            dbController.start();
+            authService = new DBAuthService(dbController);
             authService.start();
-            clients = new ArrayList<>();
+            clients = new HashMap<>();
 
             while (true) {
                 System.out.println("Сервер ожидает подключения");
@@ -32,32 +39,29 @@ public class MyServer {
                 System.out.println("Клиент подключился");
                 new ClientHandler(this, socket);
             }
-        } catch (IOException e) {
+        } catch (IOException | SQLException | ClassNotFoundException e) {
             System.out.println("Ошибка в работе сервера");
+            e.printStackTrace();
         } finally {
             if (authService != null) {
                 authService.stop();
+                dbController.stop();
             }
         }
     }
 
     public synchronized boolean isNickBusy(String nick) {
-        for (ClientHandler o : clients) {
-            if (o.getName().equals(nick)) {
-                return true;
-            }
-        }
-        return false;
+        return clients.containsKey(nick);
     }
 
     public synchronized void broadcastMsg(String msg) {
-        for (ClientHandler o : clients) {
+        for (ClientHandler o : clients.values()) {
             o.sendMsg(msg);
         }
     }
 
     public synchronized void sendMessageToCertainClient(String nick, String msg) {
-        for (ClientHandler o : clients) {
+        for (ClientHandler o : clients.values()) {
             if (o.getName().equals(nick)){
                 o.sendMsg(msg);
             }
@@ -65,18 +69,18 @@ public class MyServer {
     }
 
     public synchronized void unsubscribe(ClientHandler o) {
-        clients.remove(o);
-        refreshClientsList(clients);
+        clients.remove(o.getName());
+        refreshClientsList();
     }
 
     public synchronized void subscribe(ClientHandler o) {
-        clients.add(o);
-        refreshClientsList(clients);
+        clients.put(o.getName(), o);
+        refreshClientsList();
     }
 
-    private void refreshClientsList(List<ClientHandler> clients) {
+    public void refreshClientsList() {
         StringBuilder clientList= new StringBuilder();
-        for (ClientHandler client : clients) {
+        for (ClientHandler client : clients.values()) {
             clientList.append(' ').append(client.getName());
         }
         broadcastMsg("/clients"+clientList);

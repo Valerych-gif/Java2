@@ -1,4 +1,4 @@
-package java2.GBChat.client;
+package client;
 
 import java.io.Closeable;
 import java.io.DataInputStream;
@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.net.Socket;
 
 public class Network implements Closeable {
+
     private Socket socket;
     private DataInputStream in;
     private DataOutputStream out;
@@ -34,16 +35,27 @@ public class Network implements Closeable {
 
     public void sendAuth(String login, String password) {
         try {
-            if (socket == null || socket.isClosed()) {
-                connect();
-            }
+            connect();
             out.writeUTF("/auth " + login + " " + password);
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    private void connect() {
+    public void registration(String regData) {
+        try {
+            connect();
+            out.writeUTF(regData);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void connect() {
+        if (socket != null && !socket.isClosed()) {
+            return;
+        }
+
         try {
             socket = new Socket("localhost", 8189);
             in = new DataInputStream(socket.getInputStream());
@@ -55,6 +67,9 @@ public class Network implements Closeable {
                         if (msg.startsWith("/authok ")) {
                             callOnAuthenticated.callback(msg.split("\\s")[1]);
                             break;
+                        }
+                        if (msg.equals("/regfail")){
+                            callOnException.callback("Данный логин или ник уже занят");
                         }
                     }
                     while (true) {
@@ -106,4 +121,5 @@ public class Network implements Closeable {
             }
         }
     }
+
 }

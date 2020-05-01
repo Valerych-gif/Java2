@@ -1,4 +1,4 @@
-package java2.GBChat.client;
+package client;
 
 public interface Callback {
     void callback(Object... args);
